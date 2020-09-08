@@ -24,7 +24,31 @@
   </head>
 
   <body >
-  
+<?php
+$serverName = 'localhost';
+$username = 'root';
+$password = 'root';
+$DBName = 'mydb';
+
+$conn = new mysqli($serverName, $username, $password, $DBName);
+
+if ($conn->connect_error) {
+
+    die('connection fail :' . $conn->connect_error);
+}
+
+session_start();
+$currentName = $_SESSION['currentUserName'];
+$sql = "SELECT UserBalance FROM users WHERE UserName='" . $currentName . "'";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $balance = $row["UserBalance"];
+
+}
+
+?>
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand "  href="index.html">E&A</a>
       <a class="navbar-brand" href="#">
@@ -33,7 +57,7 @@
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-    
+
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
@@ -56,7 +80,7 @@
               <a class="dropdown-item" href="#">Hot Sale</a>
             </div>
           </li>
-          
+
         </ul>
         <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -64,18 +88,41 @@
         </form>
       </div>
     </nav>
-    
-   
+
+
     <main>
         <div class="card bg-dark text-white">
             <img src="banner.jpg" class="card-img" style="max-height: 300px;">
             <div class="card-img-overlay">
-              <h1 class="card-title">Welcome back !! <?php session_start(); echo $_SESSION['currentUserName'];  ?>,</h1><br>
+              <h1 class="card-title">Welcome back !! <?php echo $currentName; ?>,</h1><br>
               <h3 class="card-text">Lets check some new game today.</h3><br><br><br>
-              <h4 class="card-title">Banlance: $93.63</h4>
+              <h4 class="card-title">Banlance: $<?php echo $balance; ?></h4>
             </div>
           </div>
+    <div style="display:flex; justify-content:space-around;">
+          <?php
+             $newSQL = "SELECT * FROM categories ";
+             $newResult = $conn->query($newSQL);
+             
+            //  while ($categoriesRow = $newResult->fetch_array($newResult))
+             for($i=0;$i<$newResult->num_rows;$i++)
+             {
+              $categoriesRow = $newResult->fetch_assoc();
+               echo "<div class=\"card\" style=\"width: 18rem;\">
+               <img src=".$categoriesRow["IMG"]." class=\"card-img-top\" alt=\"...\">
+               <div class=\"card-body\">
+                 <h5 class=\"card-title\">".$categoriesRow["Name"]."</h5>
+                 <p class=\"card-text\">".$categoriesRow["Description"]."</p>
+               </div>
+               <div class=\"card-body\">
+                 <a href=\"#\" class=\"card-link\">Check</a>
+               </div>
+             </div>";
+             }
+            
 
+?>
+ </div>
     </main>
 
      <!-- BT JS Libraries -->
@@ -85,7 +132,7 @@
     <!-- JS Libraries -->
     <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="/dashboard/javascripts/all.js" type="text/javascript"></script>
- 
+
 
   </body>
 </html>
