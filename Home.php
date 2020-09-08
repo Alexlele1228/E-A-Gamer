@@ -23,7 +23,7 @@
 
   </head>
 
-  <body >
+  <body  >
 <?php
 $serverName = 'localhost';
 $username = 'root';
@@ -61,7 +61,7 @@ if ($result->num_rows > 0) {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="Home.php">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="Login.html">Login</a>
@@ -71,13 +71,14 @@ if ($result->num_rows > 0) {
               Product
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">FPS</a>
-              <a class="dropdown-item" href="#">Advanture</a>
-              <a class="dropdown-item" href="#">Strategy</a>
-              <a class="dropdown-item" href="#">Moba</a>
+            <a class="dropdown-item" href="Action.php">Action</a>
+              <a class="dropdown-item" href="FPS.php">FPS</a>
+              <a class="dropdown-item" href="Advanture.php">Advanture</a>
+              <a class="dropdown-item" href="Casual.php">Casual</a>
+              <a class="dropdown-item" href="MOBA.php">Moba</a>
+              <a class="dropdown-item" href="Sports.php">Sports</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Hot Sale</a>
+              <a class="dropdown-item" href="HotSale.php">Hot Sale</a>
             </div>
           </li>
 
@@ -90,7 +91,7 @@ if ($result->num_rows > 0) {
     </nav>
 
 
-    <main>
+    <main >
         <div class="card bg-dark text-white">
             <img src="banner.jpg" class="card-img" style="max-height: 300px;">
             <div class="card-img-overlay">
@@ -104,7 +105,7 @@ if ($result->num_rows > 0) {
              $newSQL = "SELECT * FROM categories ";
              $newResult = $conn->query($newSQL);
              
-            //  while ($categoriesRow = $newResult->fetch_array($newResult))
+    
              for($i=0;$i<$newResult->num_rows;$i++)
              {
               $categoriesRow = $newResult->fetch_assoc();
@@ -115,7 +116,7 @@ if ($result->num_rows > 0) {
                  <p class=\"card-text\">".$categoriesRow["Description"]."</p>
                </div>
                <div class=\"card-body\">
-                 <a href=\"#\" class=\"card-link\">Check</a>
+                 <a href=".$categoriesRow["LINK"]." class=\"card-link\">Check</a>
                </div>
              </div>";
              }
@@ -124,7 +125,7 @@ if ($result->num_rows > 0) {
 ?>
  </div>
     </main>
-
+    <footer  style="background-color:grey; min-height:200px;" ></footer>
      <!-- BT JS Libraries -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
