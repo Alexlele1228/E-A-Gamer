@@ -39,20 +39,20 @@ if ($conn->connect_error) {
 
 session_start();
 $currentName = $_SESSION['currentUserName'];
-$sql = "SELECT UserBalance FROM users WHERE UserName='" . $currentName . "'";
-$result = $conn->query($sql);
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $balance = $row["UserBalance"];
+// $sql = "SELECT UserBalance FROM users WHERE UserName='" . $currentName . "'";
+// $result = $conn->query($sql);
+// if ($result->num_rows > 0) {
+//     $row = $result->fetch_assoc();
+//     $balance = $row["UserBalance"];
 
-}
+// }
 $id = $_GET["id"];
 $category = $_GET["category"];
 
 ?>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand "  href="index.php">E&A</a>
+      <a class="navbar-brand "  href="Home.php">E&A</a>
       <a class="navbar-brand" href="#">
         <img src="Logo.png" width="30" height="30" alt="" loading="lazy"/>
       </a>
@@ -62,31 +62,40 @@ $category = $_GET["category"];
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="index.php">Home <span class="sr-only">(current)</span></a>
+          <li class="nav-item">
+            <a class="nav-link" href="Home.php">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="Login.html">Login</a>
+            <?php
+            error_reporting(0);
+               if($currentName==null)
+                 echo "<a class=\"nav-link\" href=\"Login.html\">Login</a>";
+               else{
+                 $currentName=null;
+                 echo "<a class=\"nav-link\" href=\"Login.html\">Logout</a>";
+               }
+            ?>
+           
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Product
+            <a class="nav-link dropdown-toggle  active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Product <span class="sr-only">(current)</span>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="Action.php">Action</a>
-              <a class="dropdown-item" href="FPS.php">FPS</a>
-              <a class="dropdown-item" href="Advanture.php">Advanture</a>
-              <a class="dropdown-item" href="Casual.php">Casual</a>
-              <a class="dropdown-item" href="MOBA.php">Moba</a>
-              <a class="dropdown-item" href="Sports.php">Sports</a>
+            <a class="dropdown-item" href="Category.php?category=Action&tableName=actiongames">Action</a>
+              <a class="dropdown-item" href="Category.php?category=FPS&tableName=fpsgames">FPS</a>
+              <a class="dropdown-item" href="Category.php?category=Advanture&tableName=advanturegames">Advanture</a>
+              <a class="dropdown-item" href="Category.php?category=Casual&tableName=casualgames">Casual</a>
+              <a class="dropdown-item" href="Category.php?category=MOBA&tableName=mobagames">Moba</a>
+              <a class="dropdown-item" href="Category.php?category=Sports&tableName=sportsgames">Sports</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="HotSale.php">Hot Sale</a>
+              <a class="dropdown-item" href="HotSale.php">My Cart</a>
             </div>
           </li>
 
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="form-inline my-2 my-lg-0"  action="search.php" method="post">
+          <input class="form-control mr-sm-2" name="keyWord"  type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
       </div>
@@ -101,7 +110,7 @@ $itemResult = $conn->query($itemSQL);
 if ($itemResult->num_rows > 0) {
     $itemRow = $itemResult->fetch_assoc();
     $itemName = $itemRow["Name"];
-    //  $itemPoster=$itemRow["POSTER"];
+   
     
     $itemDescription = $itemRow["Description"];
     $itemPrice = $itemRow["Price"];
@@ -110,11 +119,10 @@ if ($itemResult->num_rows > 0) {
     $picThree=$itemRow["gallery_three"];
     $picFour=$itemRow["gallery_four"];
     $picFive=$itemRow["gallery_five"];
+    $videoLink=$itemRow["videoLink"];
 }
 
-echo "
-
-<div id=\"carouselExampleControls\" class=\"carousel slide\" data-ride=\"carousel\">
+echo "<div id=\"carouselExampleControls\" class=\"carousel slide\" data-ride=\"carousel\">
   <div class=\"carousel-inner\">
 
     <div class=\"carousel-item active\">
@@ -142,12 +150,16 @@ echo "
     <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>
     <span class=\"sr-only\">Next</span>
   </a>
-</div>
+</div><hr>
 ";
 
 
 echo "
-     
+<div class=\"container\">
+<div class=\"embed-responsive embed-responsive-16by9\">
+    <iframe class=\"embed-responsive-item\" src=".$videoLink."></iframe>
+</div>
+</div>
          <div class=\"jumbotron\">
               <h1 class=\"display-4\" >" . $itemName . "</h1>
               <p class=\"lead\">" . $itemDescription . "</p>

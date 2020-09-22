@@ -37,15 +37,6 @@ if ($conn->connect_error) {
     die('connection fail :' . $conn->connect_error);
 }
 
-session_start();
-$currentName = $_SESSION['currentUserName'];
-$sql = "SELECT UserBalance FROM users WHERE UserName='" . $currentName . "'";
-$result = $conn->query($sql);
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $balance = $row["UserBalance"];
-
-}
 
 ?>
 
@@ -71,20 +62,20 @@ if ($result->num_rows > 0) {
               Product
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="Action.php">Action</a>
-              <a class="dropdown-item" href="FPS.php">FPS</a>
-              <a class="dropdown-item" href="Advanture.php">Advanture</a>
-              <a class="dropdown-item" href="Casual.php">Casual</a>
-              <a class="dropdown-item" href="MOBA.php">Moba</a>
-              <a class="dropdown-item" href="Sports.php">Sports</a>
+            <a class="dropdown-item" href="Category.php?category=Action&tableName=actiongames">Action</a>
+              <a class="dropdown-item" href="Category.php?category=FPS&tableName=fpsgames">FPS</a>
+              <a class="dropdown-item" href="Category.php?category=Advanture&tableName=advanturegames">Advanture</a>
+              <a class="dropdown-item" href="Category.php?category=Casual&tableName=casualgames">Casual</a>
+              <a class="dropdown-item" href="Category.php?category=MOBA&tableName=mobagames">Moba</a>
+              <a class="dropdown-item" href="Category.php?category=Sports&tableName=sportsgames">Sports</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="HotSale.php">Hot Sale</a>
+              <a class="dropdown-item" href="HotSale.php">My Cart</a>
             </div>
           </li>
 
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="form-inline my-2 my-lg-0"  action="search.php" method="post">
+          <input class="form-control mr-sm-2" name="keyWord"  type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
       </div>
@@ -92,14 +83,79 @@ if ($result->num_rows > 0) {
 
 
     <main >
-        <div class="card bg-dark text-white">
-            <img src="banner.jpg" class="card-img" style="max-height: 300px;">
-            <div class="card-img-overlay">
-              <h1 class="card-title">Welcome back !! <?php echo $currentName; ?>,</h1><br>
-              <h3 class="card-text">Lets check some new game today.</h3><br><br><br>
-              <h4 class="card-title">Banlance: $<?php echo $balance; ?></h4>
-            </div>
-          </div>
+       
+ <br> <div style="text-align:center;">
+ <h1>Hottest Games</h1></div><br>
+  <div style="max-width:50%;   left:0;  right:0; margin:0 auto;" >
+<div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+  <?php
+  $THISSQL = "SELECT * FROM allgames ";
+   $ThisResult = $conn->query($THISSQL);
+           
+   $maxIdSQL= "SELECT COUNT(*) FROM allgames";
+   $maxIdResult=$conn->query($maxIdSQL);
+   $idRow = $maxIdResult->fetch_assoc();
+  $maxID= $idRow["COUNT(*)"];
+  echo "<br>";
+  $imgArr=array();
+  $titleArr=array();
+  $desArr=array();
+  $idArr=array();
+  for($i=0;$i<10;$i++){
+    $ranID=rand(1,$maxID);
+   
+   
+         array_push($idArr,$ranID);
+        
+          $randSQL = "SELECT * FROM allgames WHERE ID=$ranID";
+          $randResult = $conn->query($randSQL);
+          $randRow = $randResult->fetch_assoc();
+        
+          array_push( $titleArr,$randRow["Name"]);
+          array_push($desArr,$randRow["Description"]);
+          array_push($imgArr,$randRow["IMG"]) ;
+    
+
+  }
+
+             for($j=0;$j<count($idArr);$j++)
+             {
+            //   $imgRow = $ThisResult->fetch_assoc();
+              if($j!=0){
+              echo "
+              <div class=\"carousel-item\" data-slide-to=".$j." data-interval=\"5000\">
+                <img src=".$imgArr[$j]." class=\"d-block w-100\" alt=\"...\">
+                <div class=\"carousel-caption d-none d-md-block\">
+                <h5>".$titleArr[$j]."</h5>
+                <p>".$desArr[$j]."</p>
+                </div>
+              </div>";
+              }else{
+                echo "<div class=\"carousel-item active\" data-slide-to=".$j." data-interval=\"5000\">
+                <img src=".$imgArr[$j]." class=\"d-block w-100\" alt=\"...\">
+                <div class=\"carousel-caption d-none d-md-block\">
+                <h5>".$titleArr[$j]."</h5>
+                <p>".$desArr[$j]."</p>
+                </div>
+              </div>";
+              }
+            }
+             ?>
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleInterval" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+</div>
+<hr>
+<br><br>
+
     <div style="display:flex; justify-content:space-around;">
           <?php
              $newSQL = "SELECT * FROM categories ";
@@ -113,11 +169,12 @@ if ($result->num_rows > 0) {
                <img src=".$categoriesRow["IMG"]." class=\"card-img-top\" alt=\"...\">
                <div class=\"card-body\">
                  <h5 class=\"card-title\">".$categoriesRow["Name"]."</h5>
-                 <p class=\"card-text\">".$categoriesRow["Description"]."</p>
+                 <div style=\"height:400px; over-flow:hidden;\">
+                 <p class=\"card-text\">".$categoriesRow["Description"]."</p></div>
                </div>
                <div class=\"card-body\">
-                 <a href=".$categoriesRow["LINK"]." class=\"card-link\">Check</a>
-               </div>
+                 <a href=\"Category.php?category=".$categoriesRow["Name"]."&tableName=".$categoriesRow["tableName"]."\"  role=\"button\" class=\"btn btn-info\">Check</a>
+                         </div>
              </div>";
              }
             

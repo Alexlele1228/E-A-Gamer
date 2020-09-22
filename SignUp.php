@@ -21,7 +21,9 @@ if($conn->connect_error){
     die('connection fail :'.$conn->connect_error);
 }
 
-
+$firstSQL="SELECT * FROM users WHERE USERNAME=\"$name\"";
+$firstResult=$conn->query($firstSQL);
+if($firstResult->num_rows<=0){
 $sql="INSERT INTO users (USERNAME, USERPASSWORD, PHONENUMBER) VALUES('".$name."','".$userPassword."','".$userPhoneNumber."')";
 $result=$conn->query($sql);
 
@@ -42,6 +44,12 @@ if($result>0)
     print("Redirecting in 3 seconds.....");
    
 }
+}else{
+    echo "User name already exsits, redirect in 3 seconds....<br><br>";
+    header( 'refresh:3;  /dashboard/signUp.html');
+    print("Redirecting in 3 seconds.....");
+}
+
 
 
 ?>
