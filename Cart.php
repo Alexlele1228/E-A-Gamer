@@ -1,12 +1,14 @@
+<?php
+session_start();
+?>
 <!doctype html>
 <html lang="en">
 <?php include 'MyFrame.php'; ?>
 <?php
+$byPice=false;
+$currentName=$_SESSION["currentUser"];
+$tableName=$currentName."_CART";
 
-$keyWord=$_POST["keyWord"];
-
- $sql = "SELECT * FROM allgames WHERE Description like \"%" . $keyWord . "%\"";
- $result = $conn->query($sql);
 ?>
   <body  >
 
@@ -33,14 +35,14 @@ $keyWord=$_POST["keyWord"];
               Product
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="Action.php">Action</a>
-              <a class="dropdown-item" href="FPS.php">FPS</a>
-              <a class="dropdown-item" href="Advanture.php">Advanture</a>
-              <a class="dropdown-item" href="Casual.php">Casual</a>
-              <a class="dropdown-item" href="MOBA.php">Moba</a>
-              <a class="dropdown-item" href="Sports.php">Sports</a>
+            <a class="dropdown-item" href="Category.php?category=Action&tableName=actiongames">Action</a>
+              <a class="dropdown-item" href="Category.php?category=FPS&tableName=fpsgames">FPS</a>
+              <a class="dropdown-item" href="Category.php?category=Advanture&tableName=advanturegames">Advanture</a>
+              <a class="dropdown-item" href="Category.php?category=Casual&tableName=casualgames">Casual</a>
+              <a class="dropdown-item" href="Category.php?category=MOBA&tableName=mobagames">Moba</a>
+              <a class="dropdown-item" href="Category.php?category=Sports&tableName=sportsgames">Sports</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="HotSale.php">Hot Sale</a>
+              <a class="dropdown-item" href="HotSale.php">My Cart</a>
             </div>
           </li>
 
@@ -54,36 +56,52 @@ $keyWord=$_POST["keyWord"];
     </nav>
 
 
-    <main style="padding:20px;">
-    <div class="row">
+    <main >
+        <div class="card bg-dark text-white">
+        <div style="max-height:300px;  overflow:hidden;">
+            <img src="./MyImages/Banner.png" class="img-fluid" alt="Responsive image">
+            </div>
+            <div class="card-img-overlay">
+              <h2 class="card-title">Hi !! <?php echo $currentName; ?>,</h2><br>
+              <h4 class="card-text">Lets check your cart.</h4><br><br><br>
+            </div>
+          </div><hr><br>
+         
           <?php
-             for($i=0;$i<$result->num_rows;$i++)
+          if(!$byPice){
+             $newSQL = "SELECT * FROM ".$tableName." ";
+             $newResult = $conn->query($newSQL);
+               
+             for($i=0;$i<$newResult->num_rows;$i++)
              {
-                $row = $result->fetch_assoc();
-                $secSQL="SELECT * FROM ".$row["tableName"]." where Name=\"".$row["Name"]."\"";
-                $secResult = $conn->query($secSQL);
-                $secRow=$secResult->fetch_assoc();
-             
-               echo " <div class=\"col\"><div class=\"card\" style=\"width: 18rem;\">
-               <img src=".$row["IMG"]." class=\"card-img-top\" alt=\"...\">
-               <div class=\"card-body\">
-                 <h5 class=\"card-title\">".$row["Name"]."</h5>
-                 <div style=\"min-height:400px; over-flow:hidden;\">
-                 <p class=\"card-text\">".$row["Description"]."</p></div>
-               </div> <div class=\"card-body\">
-               <a href=\"Item.php?category=".$row["tableName"]."&id=".$secRow["ID"]."\"  role=\"button\" class=\"btn btn-info\">Check</a>
-                       </div>
-                        </div></div>";
-            
-              
-             }
-             
-             
-            
+              $categoriesRow = $newResult->fetch_assoc();
+              $sqlB="SELECT * FROM ".$categoriesRow["CATEGORY"]." WHERE ID=".$categoriesRow["GAMEID"]."";
+              $resultB=$conn->query($sqlB);
+              for($j=0;$j<$resultB->num_rows;$j++)
+              {
+                $thisRow=$resultB->fetch_assoc();
+                echo "<div class=\"card\" style=\"width: 18rem;\">
+                <img src=".$thisRow["IMG"]." class=\"card-img-top\" alt=\"...\">
+                <div class=\"card-body\">
+                  <h5 class=\"card-title\">".$thisRow["Name"]."</h5>
+                  <div style=\"min-height:400px; over-flow:hidden;\">
+                  <p class=\"card-text\">".$thisRow["Price"]."</p></div>
+                </div>
+                <div class=\"card-body\">
+                  
+                  <a id=\"cartBtn\" onclick=\"SelectedTestPlan(this);\" href=\"javascript:void(0);\"  role=\"button\" class=\"btn btn-danger\">Delete</a>
+                          </div>
+              </div>";
+              }
+             }}else{
 
+
+             }
+            
+       
 ?>
- </div>
- 
+</div>
+
     </main>
     <footer  style="background-color:grey; min-height:200px;" ></footer>
      <!-- BT JS Libraries -->
@@ -93,7 +111,17 @@ $keyWord=$_POST["keyWord"];
     <!-- JS Libraries -->
     <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="/dashboard/javascripts/all.js" type="text/javascript"></script>
-    <script>
+    
+<script>
+   function SelectedTestPlan(el) {    
+    <?php  
+    $sqlH="DELETE FROM ".$tableName." WHERE GAMEID=".$id." AND CATEGORY=".$category."";
+    $resultH=$conn->query($sqlH);
+    header("Refresh:0");
+   ?>
+    }
+</script>
+<script>
 function showHint(str) {
   if (str.length == 0) {
     document.getElementById("txtHint").innerHTML = "";
@@ -110,6 +138,5 @@ function showHint(str) {
   }
 }
 </script>
-
   </body>
 </html>

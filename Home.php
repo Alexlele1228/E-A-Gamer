@@ -1,44 +1,12 @@
+<?php  session_start();?>
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-
-    <!-- Always force latest IE rendering engine or request Chrome Frame -->
-    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Use title if it's in the page YAML frontmatter -->
-    <title>E&A Gamer</title>
-
-    <meta name="description" content="XAMPP is an easy to install Apache distribution containing MariaDB, PHP and Perl." />
-    <meta name="keywords" content="xampp, apache, php, perl, mariadb, open source distribution" />
-
-    <!--link href="/dashboard/stylesheets/normalize.css" rel="stylesheet" type="text/css" /><link href="/dashboard/stylesheets/all.css" rel="stylesheet" type="text/css" />-->
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
-    <script src="/dashboard/javascripts/modernizr.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
-    <link href="Logo.png" rel="icon" type="image/png" />
-
-
-  </head>
-
-  <body  >
+<?php include 'MyFrame.php'; ?>
 <?php
-$serverName = 'localhost';
-$username = 'root';
-$password = 'root';
-$DBName = 'mydb';
 
-$conn = new mysqli($serverName, $username, $password, $DBName);
+$currentName=$_GET["currentUser"];
 
-if ($conn->connect_error) {
-
-    die('connection fail :' . $conn->connect_error);
-}
-
-session_start();
-$currentName = $_SESSION['currentUserName'];
+$_SESSION["currentUser"] = $currentName;
 $sql = "SELECT UserBalance FROM users WHERE UserName='" . $currentName . "'";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
@@ -49,6 +17,8 @@ if ($result->num_rows > 0) {
 }
 
 ?>
+  <body  >
+
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand "  href="Home.php">E&A</a>
@@ -65,7 +35,7 @@ if ($result->num_rows > 0) {
             <a class="nav-link" href="Home.php">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="Login.html">Logout</a>
+          <a class="nav-link" href="Cart.php">My Cart</a>;        
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -84,8 +54,9 @@ if ($result->num_rows > 0) {
           </li>
 
         </ul>
-        <form class="form-inline my-2 my-lg-0"  action="search.php" method="post">
-          <input class="form-control mr-sm-2" name="keyWord"  type="search" placeholder="Search" aria-label="Search">
+        <p style="color:white;">You looking for : <span id="txtHint"></span><span> ?</span></p>
+        <form class="form-inline my-2 my-lg-0"  action="Search.php" method="post">
+          <input class="form-control mr-sm-2" name="keyWord"  type="search" placeholder="Search" aria-label="Search" onkeyup="showHint(this.value)">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
       </div>
@@ -116,7 +87,7 @@ if ($result->num_rows > 0) {
                <img src=".$categoriesRow["IMG"]." class=\"card-img-top\" alt=\"...\">
                <div class=\"card-body\">
                  <h5 class=\"card-title\">".$categoriesRow["Name"]."</h5>
-                 <div style=\"height:400px; over-flow:hidden;\">
+                 <div style=\"min-height:400px; over-flow:hidden;\">
                  <p class=\"card-text\">".$categoriesRow["Description"]."</p></div>
                </div>
                <div class=\"card-body\">
@@ -137,7 +108,39 @@ if ($result->num_rows > 0) {
     <!-- JS Libraries -->
     <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="/dashboard/javascripts/all.js" type="text/javascript"></script>
-
-
+    <script>
+function showHint(str) {
+  if (str.length == 0) {
+    document.getElementById("txtHint").innerHTML = "";
+    return;
+  } else {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("txtHint").innerHTML = this.responseText;
+      }
+    };
+    xmlhttp.open("GET", "gethint.php?q=" + str, true);
+    xmlhttp.send();
+  }
+}
+</script>
+<script>
+function showHint(str) {
+  if (str.length == 0) {
+    document.getElementById("txtHint").innerHTML = "";
+    return;
+  } else {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("txtHint").innerHTML = this.responseText;
+      }
+    };
+    xmlhttp.open("GET", "gethint.php?q=" + str, true);
+    xmlhttp.send();
+  }
+}
+</script>
   </body>
 </html>

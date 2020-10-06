@@ -1,11 +1,8 @@
-<html>
-<body>
-
 <?php  
-$serverName='localhost';
-$username='root';
-$password='root';
-$DBName='mydb';
+$serverName = 'localhost';
+$username = 'id14943896_root';
+$password = 'Qpd6u(O<_42h@|FK';
+$DBName = 'id14943896_mydb';
 
 $name=$_POST["name"];
 
@@ -27,24 +24,18 @@ if($result->num_rows>0)
     $row=$result->fetch_assoc();
     if($row["UserPassword"]==$userPassword)
     {
-        session_start();
-        $_SESSION["currentUserName"]=$name;
-        header('Location: '.$uri.'/dashboard/Home.php');
+        header("refresh:3; /Home.php?currentUser=".$name);
     }else{
-        $alert="Incorrect password, Please try again.";
-       echo "<script>alert('{$alert}')</script>";
-       header( 'refresh:0;  /dashboard/Login.html');
+
+       header( 'refresh:0;  /Login.html');
     }
     
 }else{
-    echo "User not exsits!<br><br>";
-    header( 'refresh:3;  /dashboard/Login.html');
-    print("Redirecting in 3 seconds.....");
+  
+    header( 'refresh:3;  /Login.html');
+  
    
 }
 
 
 ?>
-
-</body>
-</html>
